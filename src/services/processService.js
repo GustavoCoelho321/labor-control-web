@@ -1,46 +1,46 @@
 import api from './api';
 
-// Service para gerenciar usuários
-const userService = {
-  // Buscar todos os usuários
+// Service para gerenciar processos
+const processService = {
+  // Buscar todos os processos
   getAll: async () => {
     try {
-      const response = await api.get('/users');
+      const response = await api.get('/processes');
       return response.data;
     } catch (error) {
-      throw error.response?.data || 'Erro ao buscar usuários';
+      throw error.response?.data || 'Erro ao buscar processos';
     }
   },
 
-  // Criar novo usuário
-  create: async (userData) => {
+  // Criar novo processo
+  create: async (processData) => {
     try {
-      const response = await api.post('/users', userData);
+      const response = await api.post('/processes', processData);
       return response.data;
     } catch (error) {
-      throw error.response?.data || 'Erro ao criar usuário';
+      throw error.response?.data || 'Erro ao criar processo';
     }
   },
 
-  // Atualizar usuário
-  update: async (id, userData) => {
+  // Atualizar processo
+  update: async (id, processData) => {
     try {
-      const response = await api.put(`/users/${id}`, userData);
+      const response = await api.put(`/processes/${id}`, processData);
       return response.data;
     } catch (error) {
-      throw error.response?.data || 'Erro ao atualizar usuário';
+      throw error.response?.data || 'Erro ao atualizar processo';
     }
   },
 
-  // Deletar usuário
+  // Deletar processo (soft delete - apenas inativa)
   delete: async (id) => {
     try {
-      const response = await api.delete(`/users/${id}`);
+      const response = await api.delete(`/processes/${id}`);
       return response.data;
     } catch (error) {
-      throw error.response?.data || 'Erro ao excluir usuário';
+      throw error.response?.data || 'Erro ao excluir processo';
     }
   }
 };
 
-export default userService;
+export default processService;

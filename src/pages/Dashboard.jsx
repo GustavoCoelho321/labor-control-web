@@ -3,6 +3,7 @@ import Header from "../Components/Header";
 import Sidebar from "../Components/SideBar";
 import UsersManagement from "./UsersManagement";
 import "../styles/Dashboard.css";
+import ProcessesManagement from "./ProcessesManagement";
 
 // Componente da tela principal
 function DashboardHome() {
@@ -70,7 +71,7 @@ export default function Dashboard() {
           <Routes>
             <Route index element={<DashboardHome />} />
             <Route path="users" element={<UsersManagement />} />
-            <Route path="processos" element={<ProcessosManagement />} />
+            <Route path="processos" element={<ProcessesManagement />} />
             <Route path="scheduling" element={<Scheduling />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>

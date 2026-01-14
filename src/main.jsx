@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import "./styles/theme.css";
 import "./styles/Dashboard.css";
 import "./styles/UsersManagement.css";
+import "./styles/ProcessesManagement.css";
+
 
 import App from "./App";
 
