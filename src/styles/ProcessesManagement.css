@@ -41,21 +41,23 @@
 /* Grid de Processos */
 .processes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 28px;
   margin-top: 24px;
 }
 
-/* Process Card */
+/* Process Card - Layout Redesenhado */
 .process-card {
   background: white;
-  border-radius: 16px;
-  padding: 24px;
-  border: 2px solid var(--gray-300);
+  border-radius: 12px;
+  padding: 0;
+  border: 1px solid #e5e7eb;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: slideInCard 0.5s ease-out backwards;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slideInCard {
@@ -76,24 +78,26 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--dhl-red) 0%, var(--dhl-yellow) 100%);
+  background: linear-gradient(90deg, #d40511 0%, #ffcc00 100%);
 }
 
 .process-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-  border-color: var(--dhl-yellow);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  border-color: #ffcc00;
 }
 
+/* Header do Card */
 .process-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  padding: 20px 24px 16px;
+  background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
 }
 
 .process-icon {
-  font-size: 32px;
+  font-size: 28px;
   animation: bounce 2s ease-in-out infinite;
 }
 
@@ -105,55 +109,70 @@
 .process-badge {
   font-size: 11px;
   font-weight: 700;
-  color: var(--gray-600);
-  background: var(--gray-100);
-  padding: 4px 10px;
-  border-radius: 12px;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 5px 12px;
+  border-radius: 20px;
   letter-spacing: 0.5px;
 }
 
+/* Body do Card */
 .process-body {
-  margin-bottom: 20px;
+  padding: 0 24px 20px;
+  flex: 1;
 }
 
 .process-name {
   font-size: 18px;
   font-weight: 700;
-  color: var(--gray-900);
+  color: #111827;
   margin: 0 0 8px 0;
+  line-height: 1.4;
 }
 
 .process-description {
   font-size: 14px;
-  color: var(--gray-600);
+  color: #6b7280;
   margin: 0;
   line-height: 1.6;
   min-height: 42px;
 }
 
+/* =====================================
+   RODAPÉ REDESENHADO - LAYOUT PROFISSIONAL
+   ===================================== */
 .process-footer {
-  display: flex;
-  gap: 8px;
-  padding-top: 16px;
-  border-top: 1px solid var(--gray-200);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 16px 20px 20px;
+  background: #fafafa;
+  border-top: 1px solid #e5e7eb;
 }
 
-/* Botões dos Cards */
-.btn-productivity {
-  flex: 1;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, var(--dhl-yellow) 0%, #f0b800 100%);
+/* Linha 1: Botões Principais */
+.btn-productivity,
+.btn-subprocesses {
+  height: 44px;
+  padding: 0 16px;
   border: none;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  box-shadow: 0 2px 8px rgba(255, 204, 0, 0.3);
+  gap: 8px;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-productivity {
+  background: linear-gradient(135deg, #ffcc00 0%, #f0b800 100%);
+  color: #1f2937;
+  grid-column: 1;
 }
 
 .btn-productivity:hover {
@@ -161,44 +180,84 @@
   box-shadow: 0 4px 12px rgba(255, 204, 0, 0.4);
 }
 
+.btn-subprocesses {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  grid-column: 2;
+}
+
+.btn-subprocesses:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+/* Container para botões de ação */
+.process-footer::after {
+  content: '';
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* Botões de Ação - Posicionamento correto */
 .btn-edit-small,
 .btn-delete-small {
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: white;
   cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
+  transition: all 0.2s ease;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .btn-edit-small {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  color: #1976d2;
+  color: #3b82f6;
+  position: absolute;
+  bottom: 3px;
+  right: 45px;
 }
 
 .btn-edit-small:hover {
-  transform: translateY(-2px) rotate(15deg);
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  background: #eff6ff;
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 .btn-delete-small {
-  background: linear-gradient(135deg, #fee 0%, #fdd 100%);
-  color: var(--dhl-red);
+  color: #dc2626;
+  position: absolute;
+  bottom: 3px;
+  right: 10px;
 }
 
 .btn-delete-small:hover {
-  transform: translateY(-2px) scale(1.1);
-  box-shadow: 0 4px 12px rgba(212, 5, 17, 0.3);
+  background: #fef2f2;
+  border-color: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+/* Ícones dos botões */
+.btn-productivity svg,
+.btn-subprocesses svg,
+.btn-edit-small svg,
+.btn-delete-small svg {
+  flex-shrink: 0;
 }
 
 /* Textarea */
 textarea {
   width: 100%;
   padding: 14px 16px;
-  border: 2px solid var(--gray-300);
+  border: 2px solid #e5e7eb;
   border-radius: 10px;
   font-size: 15px;
   font-family: inherit;
@@ -209,7 +268,7 @@ textarea {
 
 textarea:focus {
   outline: none;
-  border-color: var(--dhl-yellow);
+  border-color: #ffcc00;
   box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.1);
   transform: translateY(-2px);
 }
@@ -219,36 +278,63 @@ small {
   display: block;
   margin-top: 6px;
   font-size: 12px;
-  color: var(--gray-600);
+  color: #6b7280;
   font-style: italic;
 }
 
-/* Reutilizar estilos de UsersManagement */
-.page-header,
-.header-left,
-.subtitle,
-.btn-primary,
-.btn-icon,
-.search-container,
-.search-wrapper,
-.search-icon,
-.search-input,
-.clear-search,
-.no-results,
-.loading,
-.empty-state,
-.empty-icon,
-.btn-secondary,
-.modal-overlay,
-.modal-content,
-.modal-header,
-.modal-close,
-.modal-body,
-.form-group,
-.modal-actions,
-.btn-cancel,
-.btn-submit {
-  /* Estilos já definidos em UsersManagement.css */
+/* Modal maior para subprocessos */
+.modal-content.large {
+  max-width: 700px;
+  width: 90%;
+}
+
+/* Lista de subprocessos */
+.sub-list {
+  margin-bottom: 32px;
+}
+
+.sub-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.sub-info strong {
+  color: #111827;
+}
+
+.sub-info span {
+  font-weight: bold;
+  color: #d40511;
+  margin-left: 12px;
+}
+
+.sub-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Formulário de subprocesso */
+.sub-form {
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.sub-form h4 {
+  margin: 0 0 16px 0;
+  color: #d40511;
+}
+
+/* Mensagem sem subprocessos */
+.no-subs {
+  text-align: center;
+  color: #6b7280;
+  padding: 40px 0;
 }
 
 /* Responsive */
@@ -262,10 +348,23 @@ small {
   }
 
   .process-footer {
-    flex-wrap: wrap;
+    grid-template-columns: 1fr;
+    padding: 16px;
   }
 
-  .btn-productivity {
-    flex: 1 1 100%;
+  .btn-productivity,
+  .btn-subprocesses {
+    grid-column: 1;
+    height: 42px;
+  }
+
+  .btn-edit-small {
+    right: 62px;
+    bottom: 16px;
+  }
+
+  .btn-delete-small {
+    right: 16px;
+    bottom: 16px;
   }
 }

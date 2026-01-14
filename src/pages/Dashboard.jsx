@@ -50,10 +50,10 @@ function ProcessosManagement() {
 }
 
 // Componente de Scheduling
-function Scheduling() {
+function Labor() {
   return (
     <div className="dashboard-container">
-      <h1>Scheduling</h1>
+      <h1>Labor</h1>
       <p>Em desenvolvimento...</p>
     </div>
   );
@@ -72,7 +72,7 @@ export default function Dashboard() {
             <Route index element={<DashboardHome />} />
             <Route path="users" element={<UsersManagement />} />
             <Route path="processos" element={<ProcessesManagement />} />
-            <Route path="scheduling" element={<Scheduling />} />
+            <Route path="labor" element={<Labor />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>

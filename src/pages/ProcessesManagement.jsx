@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import processService from '../services/processService';
 import productivityService from '../services/productivityService';
+import subProcessService from '../services/subProcessService'; // Novo import necessário
 import "../styles/ProcessesManagement.css";
 
 export default function ProcessesManagement() {
@@ -9,10 +10,11 @@ export default function ProcessesManagement() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showProductivityModal, setShowProductivityModal] = useState(false);
+  const [showSubProcessesModal, setShowSubProcessesModal] = useState(false);
   const [editingProcess, setEditingProcess] = useState(null);
   const [selectedProcess, setSelectedProcess] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const [formData, setFormData] = useState({
     name: '',
     description: ''
@@ -22,22 +24,31 @@ export default function ProcessesManagement() {
     processId: 0,
     targetPerHour: 0,
     fatigueFactor: 0,
-    displacementTimeMinutes: 0
+    displacementTimeMinutes: 0,
+    id: null
   });
 
-  // Buscar processos ao carregar
+  // Estados para Subprocessos
+  const [subProcesses, setSubProcesses] = useState([]);
+  const [subFormData, setSubFormData] = useState({
+    name: '',
+    description: '',
+    standardTimeMinutes: 0
+  });
+  const [editingSubProcess, setEditingSubProcess] = useState(null);
+
+  // Carregar processos
   useEffect(() => {
     fetchProcesses();
   }, []);
 
-  // Filtrar processos quando o termo de busca muda
   useEffect(() => {
     if (searchTerm.trim() === '') {
       setFilteredProcesses(processes);
     } else {
-      const filtered = processes.filter(process => 
+      const filtered = processes.filter(process =>
         process.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        process.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        (process.description && process.description.toLowerCase().includes(searchTerm.toLowerCase()))
       );
       setFilteredProcesses(filtered);
     }
@@ -51,12 +62,13 @@ export default function ProcessesManagement() {
       setFilteredProcesses(data);
     } catch (error) {
       console.error('Erro ao buscar processos:', error);
-      alert('Erro ao carregar processos: ' + error);
+      alert('Erro ao carregar processos');
     } finally {
       setLoading(false);
     }
   };
 
+  // Funções de Processo (criar/editar/excluir) - mantidas iguais
   const handleCreate = () => {
     setEditingProcess(null);
     setFormData({ name: '', description: '' });
@@ -65,76 +77,59 @@ export default function ProcessesManagement() {
 
   const handleEdit = (process) => {
     setEditingProcess(process);
-    setFormData({ 
-      name: process.name, 
-      description: process.description || '' 
+    setFormData({
+      name: process.name,
+      description: process.description || ''
     });
     setShowModal(true);
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Tem certeza que deseja excluir este processo?')) return;
-
+    if (!window.confirm('Tem certeza que deseja excluir este processo?')) return;
     try {
       await processService.delete(id);
       alert('Processo excluído com sucesso!');
       fetchProcesses();
     } catch (error) {
-      console.error('Erro ao excluir processo:', error);
-      alert('Erro ao excluir processo: ' + error);
+      alert('Erro ao excluir processo');
     }
   };
 
   const handleSubmit = async () => {
-    if (!formData.name) {
+    if (!formData.name.trim()) {
       alert('Preencha o nome do processo');
       return;
     }
-
     try {
       if (editingProcess) {
         await processService.update(editingProcess.id, formData);
-        alert('Processo atualizado com sucesso!');
+        alert('Processo atualizado!');
       } else {
         await processService.create(formData);
-        alert('Processo criado com sucesso!');
+        alert('Processo criado!');
       }
-
       setShowModal(false);
       fetchProcesses();
     } catch (error) {
-      console.error('Erro ao salvar processo:', error);
-      alert('Erro ao salvar processo: ' + error);
+      alert('Erro ao salvar processo');
     }
   };
 
+  // Produtividade - mantida igual e funcionando
   const handleManageProductivity = async (process) => {
     setSelectedProcess(process);
-    
     try {
       const productivity = await productivityService.getByProcess(process.id);
-      
-      if (productivity) {
-        setProductivityData({
-          processId: process.id,
-          targetPerHour: productivity.targetPerHour,
-          fatigueFactor: productivity.fatigueFactor,
-          displacementTimeMinutes: productivity.displacementTimeMinutes,
-          id: productivity.id
-        });
-      } else {
-        setProductivityData({
-          processId: process.id,
-          targetPerHour: 0,
-          fatigueFactor: 0,
-          displacementTimeMinutes: 0
-        });
-      }
-      
+      setProductivityData({
+        id: productivity?.id || null,
+        processId: process.id,
+        targetPerHour: productivity?.targetPerHour || 0,
+        fatigueFactor: productivity?.fatigueFactor || 0,
+        displacementTimeMinutes: productivity?.displacementTimeMinutes || 0
+      });
       setShowProductivityModal(true);
     } catch (error) {
-      console.error('Erro ao buscar produtividade:', error);
-      alert('Erro ao carregar produtividade: ' + error);
+      alert('Erro ao carregar produtividade');
     }
   };
 
@@ -143,34 +138,87 @@ export default function ProcessesManagement() {
       alert('Meta por hora deve ser maior que zero');
       return;
     }
-
     try {
       if (productivityData.id) {
         await productivityService.update(productivityData.id, productivityData);
-        alert('Produtividade atualizada com sucesso!');
+        alert('Produtividade atualizada!');
       } else {
         await productivityService.create(productivityData);
-        alert('Produtividade criada com sucesso!');
+        alert('Produtividade criada!');
       }
-
       setShowProductivityModal(false);
-      fetchProcesses();
     } catch (error) {
-      console.error('Erro ao salvar produtividade:', error);
-      alert('Erro ao salvar produtividade: ' + error);
+      alert('Erro ao salvar produtividade');
     }
   };
 
-  const clearSearch = () => {
-    setSearchTerm('');
+  // NOVO: Subprocessos
+  const handleManageSubProcesses = async (process) => {
+    setSelectedProcess(process);
+    try {
+      const subs = await subProcessService.getByProcess(process.id);
+      setSubProcesses(subs || []);
+      setShowSubProcessesModal(true);
+    } catch (error) {
+      alert('Erro ao carregar subprocessos');
+    }
   };
 
+  const handleSubCreate = () => {
+    setEditingSubProcess(null);
+    setSubFormData({ name: '', description: '', standardTimeMinutes: 0 });
+  };
+
+  const handleSubEdit = (sub) => {
+    setEditingSubProcess(sub);
+    setSubFormData({
+      name: sub.name,
+      description: sub.description || '',
+      standardTimeMinutes: sub.standardTimeMinutes
+    });
+  };
+
+  const handleSubDelete = async (id) => {
+    if (!window.confirm('Tem certeza que deseja excluir este subprocesso?')) return;
+    try {
+      await subProcessService.delete(id);
+      const updated = await subProcessService.getByProcess(selectedProcess.id);
+      setSubProcesses(updated);
+      alert('Subprocesso excluído!');
+    } catch (error) {
+      alert('Erro ao excluir subprocesso');
+    }
+  };
+
+  const handleSubSubmit = async () => {
+    if (!subFormData.name.trim() || subFormData.standardTimeMinutes <= 0) {
+      alert('Preencha nome e tempo padrão (maior que 0)');
+      return;
+    }
+    try {
+      const payload = {
+        ...subFormData,
+        processId: selectedProcess.id
+      };
+      if (editingSubProcess) {
+        await subProcessService.update(editingSubProcess.id, payload);
+        alert('Subprocesso atualizado!');
+      } else {
+        await subProcessService.create(payload);
+        alert('Subprocesso criado!');
+      }
+      const updated = await subProcessService.getByProcess(selectedProcess.id);
+      setSubProcesses(updated);
+      handleSubCreate();
+    } catch (error) {
+      alert('Erro ao salvar subprocesso');
+    }
+  };
+
+  const clearSearch = () => setSearchTerm('');
+
   if (loading) {
-    return (
-      <div className="processes-management">
-        <div className="loading">Carregando processos...</div>
-      </div>
-    );
+    return <div className="processes-management"><div className="loading">Carregando processos...</div></div>;
   }
 
   return (
@@ -183,12 +231,10 @@ export default function ProcessesManagement() {
           </p>
         </div>
         <button className="btn-primary" onClick={handleCreate}>
-          <span className="btn-icon">+</span>
-          Novo Processo
+          <span className="btn-icon">+</span> Novo Processo
         </button>
       </div>
 
-      {/* Barra de Busca */}
       <div className="search-container">
         <div className="search-wrapper">
           <svg className="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -210,9 +256,7 @@ export default function ProcessesManagement() {
           )}
         </div>
         {searchTerm && filteredProcesses.length === 0 && (
-          <p className="no-results">
-            Nenhum resultado encontrado para "<strong>{searchTerm}</strong>"
-          </p>
+          <p className="no-results">Nenhum resultado encontrado para "<strong>{searchTerm}</strong>"</p>
         )}
       </div>
 
@@ -235,7 +279,7 @@ export default function ProcessesManagement() {
       ) : (
         <div className="processes-grid">
           {filteredProcesses.map((process, index) => (
-            <div key={process.id} className="process-card" style={{animationDelay: `${index * 0.1}s`}}>
+            <div key={process.id} className="process-card" style={{ animationDelay: `${index * 0.1}s` }}>
               <div className="process-header">
                 <div className="process-icon">🛠️</div>
                 <div className="process-badge">ID: {process.id}</div>
@@ -247,7 +291,7 @@ export default function ProcessesManagement() {
                 </p>
               </div>
               <div className="process-footer">
-                <button 
+                <button
                   className="btn-productivity"
                   onClick={() => handleManageProductivity(process)}
                   title="Gerenciar produtividade"
@@ -257,7 +301,19 @@ export default function ProcessesManagement() {
                   </svg>
                   Produtividade
                 </button>
-                <button 
+
+                <button
+                  className="btn-subprocesses"
+                  onClick={() => handleManageSubProcesses(process)}
+                  title="Gerenciar subprocessos"
+                >
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M7 9a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9zM5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5z" />
+                  </svg>
+                  Subprocessos
+                </button>
+
+                <button
                   className="btn-edit-small"
                   onClick={() => handleEdit(process)}
                   title="Editar processo"
@@ -266,7 +322,8 @@ export default function ProcessesManagement() {
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                   </svg>
                 </button>
-                <button 
+
+                <button
                   className="btn-delete-small"
                   onClick={() => handleDelete(process.id)}
                   title="Excluir processo"
@@ -287,9 +344,7 @@ export default function ProcessesManagement() {
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <h3>{editingProcess ? 'Editar Processo' : 'Novo Processo'}</h3>
-              <button className="modal-close" onClick={() => setShowModal(false)}>
-                ✕
-              </button>
+              <button className="modal-close" onClick={() => setShowModal(false)}>✕</button>
             </div>
             <div className="modal-body">
               <div className="form-group">
@@ -311,9 +366,7 @@ export default function ProcessesManagement() {
                 />
               </div>
               <div className="modal-actions">
-                <button className="btn-cancel" onClick={() => setShowModal(false)}>
-                  Cancelar
-                </button>
+                <button className="btn-cancel" onClick={() => setShowModal(false)}>Cancelar</button>
                 <button className="btn-submit" onClick={handleSubmit}>
                   {editingProcess ? 'Atualizar' : 'Criar'}
                 </button>
@@ -329,9 +382,7 @@ export default function ProcessesManagement() {
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <h3>📊 Produtividade: {selectedProcess?.name}</h3>
-              <button className="modal-close" onClick={() => setShowProductivityModal(false)}>
-                ✕
-              </button>
+              <button className="modal-close" onClick={() => setShowProductivityModal(false)}>✕</button>
             </div>
             <div className="modal-body">
               <div className="form-group">
@@ -339,7 +390,7 @@ export default function ProcessesManagement() {
                 <input
                   type="number"
                   value={productivityData.targetPerHour}
-                  onChange={e => setProductivityData({...productivityData, targetPerHour: parseFloat(e.target.value)})}
+                  onChange={e => setProductivityData({...productivityData, targetPerHour: parseFloat(e.target.value) || 0})}
                   placeholder="Ex: 50"
                   min="0"
                   step="0.1"
@@ -351,7 +402,7 @@ export default function ProcessesManagement() {
                 <input
                   type="number"
                   value={productivityData.fatigueFactor}
-                  onChange={e => setProductivityData({...productivityData, fatigueFactor: parseFloat(e.target.value)})}
+                  onChange={e => setProductivityData({...productivityData, fatigueFactor: parseFloat(e.target.value) || 0})}
                   placeholder="Ex: 0.9"
                   min="0"
                   max="1"
@@ -364,19 +415,92 @@ export default function ProcessesManagement() {
                 <input
                   type="number"
                   value={productivityData.displacementTimeMinutes}
-                  onChange={e => setProductivityData({...productivityData, displacementTimeMinutes: parseInt(e.target.value)})}
+                  onChange={e => setProductivityData({...productivityData, displacementTimeMinutes: parseInt(e.target.value) || 0})}
                   placeholder="Ex: 5"
                   min="0"
                 />
                 <small>Tempo médio de movimentação em minutos</small>
               </div>
               <div className="modal-actions">
-                <button className="btn-cancel" onClick={() => setShowProductivityModal(false)}>
-                  Cancelar
-                </button>
+                <button className="btn-cancel" onClick={() => setShowProductivityModal(false)}>Cancelar</button>
                 <button className="btn-submit" onClick={handleProductivitySubmit}>
                   {productivityData.id ? 'Atualizar' : 'Criar'}
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Subprocessos */}
+      {showSubProcessesModal && (
+        <div className="modal-overlay" onClick={() => setShowSubProcessesModal(false)}>
+          <div className="modal-content large" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Subprocessos: {selectedProcess?.name}</h3>
+              <button className="modal-close" onClick={() => setShowSubProcessesModal(false)}>✕</button>
+            </div>
+
+            <div className="modal-body">
+              {subProcesses.length > 0 ? (
+                <div className="sub-list">
+                  {subProcesses.map(sub => (
+                    <div key={sub.id} className="sub-item">
+                      <div className="sub-info">
+                        <strong>{sub.name}</strong>
+                        <span>{sub.standardTimeMinutes} min</span>
+                        <p>{sub.description || 'Sem descrição'}</p>
+                      </div>
+                      <div className="sub-actions">
+                        <button className="btn-edit-small" onClick={() => handleSubEdit(sub)}>Editar</button>
+                        <button className="btn-delete-small" onClick={() => handleSubDelete(sub.id)}>Excluir</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="no-subs">Nenhum subprocesso cadastrado para este processo.</p>
+              )}
+
+              <div className="sub-form">
+                <h4>{editingSubProcess ? 'Editar Subprocesso' : 'Novo Subprocesso'}</h4>
+                <div className="form-group">
+                  <label>Nome *</label>
+                  <input
+                    type="text"
+                    value={subFormData.name}
+                    onChange={e => setSubFormData({...subFormData, name: e.target.value})}
+                    placeholder="Ex: Verificação final"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Tempo Padrão (minutos) *</label>
+                  <input
+                    type="number"
+                    min="0.1"
+                    step="0.1"
+                    value={subFormData.standardTimeMinutes}
+                    onChange={e => setSubFormData({...subFormData, standardTimeMinutes: parseFloat(e.target.value) || 0})}
+                    placeholder="Ex: 2.5"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Descrição</label>
+                  <textarea
+                    value={subFormData.description}
+                    onChange={e => setSubFormData({...subFormData, description: e.target.value})}
+                    placeholder="Detalhes do subprocesso..."
+                    rows={3}
+                  />
+                </div>
+                <div className="modal-actions">
+                  <button className="btn-cancel" onClick={handleSubCreate}>
+                    {editingSubProcess ? 'Cancelar Edição' : 'Limpar'}
+                  </button>
+                  <button className="btn-submit" onClick={handleSubSubmit}>
+                    {editingSubProcess ? 'Atualizar' : 'Adicionar'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

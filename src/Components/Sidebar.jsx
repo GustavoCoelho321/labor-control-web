@@ -29,11 +29,11 @@ export default function Sidebar() {
       description: 'Gerenciar processos'
     },
     { 
-      id: 'scheduling', 
-      label: 'Scheduling', 
+      id: 'Labor', 
+      label: 'labor', 
       icon: '📈', 
-      path: '/dashboard/scheduling',
-      description: 'Agendamentos'
+      path: '/dashboard/Labor',
+      description: 'Labor Plan'
     }
   ];
 
