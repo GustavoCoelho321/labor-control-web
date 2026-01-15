@@ -2,15 +2,17 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from "../Components/Header";
 import Sidebar from "../Components/SideBar";
 import UsersManagement from "./UsersManagement";
-import "../styles/Dashboard.css";
 import ProcessesManagement from "./ProcessesManagement";
+import "../styles/Dashboard.css";
 
 // Componente da tela principal
 function DashboardHome() {
   return (
     <div className="dashboard-container">
-      <h1>Bem-vindo ao Labor Control</h1>
-      <p>Utilize o menu lateral para gerenciar usuários e montagem de scheduling.</p>
+      <div className="dashboard-header">
+        <h1>Bem-vindo ao Labor Control</h1>
+        <p>Utilize o menu lateral para gerenciar usuários e processos de produção.</p>
+      </div>
       
       <div className="stats-grid">
         <div className="stat-card">
@@ -20,6 +22,7 @@ function DashboardHome() {
             <p className="stat-number">24</p>
           </div>
         </div>
+        
         <div className="stat-card">
           <div className="stat-icon">📊</div>
           <div className="stat-info">
@@ -27,6 +30,7 @@ function DashboardHome() {
             <p className="stat-number">87%</p>
           </div>
         </div>
+        
         <div className="stat-card">
           <div className="stat-icon">✅</div>
           <div className="stat-info">
@@ -39,22 +43,40 @@ function DashboardHome() {
   );
 }
 
-// Componente de Processos
-function ProcessosManagement() {
-  return (
-    <div className="dashboard-container">
-      <h1>Gerenciamento de Processos</h1>
-      <p>Em desenvolvimento...</p>
-    </div>
-  );
-}
-
-// Componente de Scheduling
+// Componente de Labor
 function Labor() {
   return (
     <div className="dashboard-container">
-      <h1>Labor</h1>
-      <p>Em desenvolvimento...</p>
+      <div className="dashboard-header">
+        <h1>Labor Planning</h1>
+        <p>Planejamento e gestão de recursos de trabalho.</p>
+      </div>
+      
+      <div className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-icon">⏱️</div>
+          <div className="stat-info">
+            <h3>Horas Planejadas</h3>
+            <p className="stat-number">240</p>
+          </div>
+        </div>
+        
+        <div className="stat-card">
+          <div className="stat-icon">👷</div>
+          <div className="stat-info">
+            <h3>Colaboradores</h3>
+            <p className="stat-number">32</p>
+          </div>
+        </div>
+        
+        <div className="stat-card">
+          <div className="stat-icon">📈</div>
+          <div className="stat-info">
+            <h3>Eficiência</h3>
+            <p className="stat-number">92%</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

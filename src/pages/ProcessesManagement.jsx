@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import processService from '../services/processService';
 import productivityService from '../services/productivityService';
-import subProcessService from '../services/subProcessService'; // Novo import necessário
+import subProcessService from '../services/subProcessService';
 import "../styles/ProcessesManagement.css";
 
 export default function ProcessesManagement() {
@@ -28,7 +28,6 @@ export default function ProcessesManagement() {
     id: null
   });
 
-  // Estados para Subprocessos
   const [subProcesses, setSubProcesses] = useState([]);
   const [subFormData, setSubFormData] = useState({
     name: '',
@@ -37,7 +36,6 @@ export default function ProcessesManagement() {
   });
   const [editingSubProcess, setEditingSubProcess] = useState(null);
 
-  // Carregar processos
   useEffect(() => {
     fetchProcesses();
   }, []);
@@ -68,7 +66,6 @@ export default function ProcessesManagement() {
     }
   };
 
-  // Funções de Processo (criar/editar/excluir) - mantidas iguais
   const handleCreate = () => {
     setEditingProcess(null);
     setFormData({ name: '', description: '' });
@@ -115,7 +112,6 @@ export default function ProcessesManagement() {
     }
   };
 
-  // Produtividade - mantida igual e funcionando
   const handleManageProductivity = async (process) => {
     setSelectedProcess(process);
     try {
@@ -152,7 +148,6 @@ export default function ProcessesManagement() {
     }
   };
 
-  // NOVO: Subprocessos
   const handleManageSubProcesses = async (process) => {
     setSelectedProcess(process);
     try {
@@ -452,8 +447,24 @@ export default function ProcessesManagement() {
                         <p>{sub.description || 'Sem descrição'}</p>
                       </div>
                       <div className="sub-actions">
-                        <button className="btn-edit-small" onClick={() => handleSubEdit(sub)}>Editar</button>
-                        <button className="btn-delete-small" onClick={() => handleSubDelete(sub.id)}>Excluir</button>
+                        <button 
+                          className="btn-edit-small" 
+                          onClick={() => handleSubEdit(sub)}
+                          title="Editar subprocesso"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                          </svg>
+                        </button>
+                        <button 
+                          className="btn-delete-small" 
+                          onClick={() => handleSubDelete(sub.id)}
+                          title="Excluir subprocesso"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   ))}

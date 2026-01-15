@@ -1,0 +1,205 @@
+/* ===========================================
+   HEADER - DESIGN CORRIGIDO E MODERNO
+=========================================== */
+
+.header {
+  height: 70px;
+  background-color: #ffcc00;
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-logo {
+  height: 45px;
+  width: auto;
+  object-fit: contain;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #d40511;
+  margin: 0;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* ===========================================
+   USER MENU
+=========================================== */
+.user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.user-menu:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d40511 0%, #a00 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(212, 5, 17, 0.3);
+  flex-shrink: 0;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+}
+
+.user-role {
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.dropdown-arrow {
+  transition: transform 0.3s ease;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+/* ===========================================
+   DROPDOWN MENU
+=========================================== */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  overflow: hidden;
+  animation: dropdown-appear 0.2s ease-out;
+  z-index: 1000;
+}
+
+@keyframes dropdown-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.dropdown-item.logout {
+  color: #d40511;
+  border-top: 1px solid #e5e7eb;
+}
+
+.dropdown-item.logout:hover {
+  background-color: #fee2e2;
+}
+
+.dropdown-item svg {
+  flex-shrink: 0;
+}
+
+/* ===========================================
+   RESPONSIVO
+=========================================== */
+@media (max-width: 768px) {
+  .header {
+    height: 60px;
+    padding: 0 16px;
+  }
+
+  .header-logo {
+    height: 38px;
+  }
+
+  .header-title {
+    font-size: 16px;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .user-menu {
+    padding: 6px;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}

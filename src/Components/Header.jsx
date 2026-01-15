@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "../styles/Header.css"; // ← ADICIONE ESTA LINHA
 
 export default function Header() {
   const navigate = useNavigate();
@@ -14,20 +15,18 @@ export default function Header() {
   const userName = localStorage.getItem("userName") || "Usuário";
   const userInitial = userName.charAt(0).toUpperCase();
 
-  // Função para alternar o dropdown com click
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
 
-  // Fecha o dropdown ao clicar fora
   const handleClickOutside = (e) => {
     if (!e.target.closest('.user-menu')) {
       setShowDropdown(false);
     }
   };
 
-  // Adiciona listener para fechar ao clicar fora
-  useState(() => {
+  // Corrigido: useEffect ao invés de useState
+  useEffect(() => {
     if (showDropdown) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);

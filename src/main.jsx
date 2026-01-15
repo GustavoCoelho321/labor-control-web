@@ -4,6 +4,7 @@ import "./styles/theme.css";
 import "./styles/Dashboard.css";
 import "./styles/UsersManagement.css";
 import "./styles/ProcessesManagement.css";
+import "./styles/Header.css";
 
 
 import App from "./App";

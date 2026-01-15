@@ -317,6 +317,15 @@ small {
 .sub-actions {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
+}
+
+/* CORREÇÃO: Botões dentro dos cards de subprocesso não devem ser absolute */
+.sub-item .btn-edit-small,
+.sub-item .btn-delete-small {
+  position: static;
+  width: 32px;
+  height: 32px;
 }
 
 /* Formulário de subprocesso */
