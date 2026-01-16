@@ -17,7 +17,8 @@ export default function ProcessesManagement() {
 
   const [formData, setFormData] = useState({
     name: '',
-    description: ''
+    description: '',
+    area: 'Inbound' // NOVO CAMPO com valor padrão
   });
 
   const [productivityData, setProductivityData] = useState({
@@ -68,7 +69,7 @@ export default function ProcessesManagement() {
 
   const handleCreate = () => {
     setEditingProcess(null);
-    setFormData({ name: '', description: '' });
+    setFormData({ name: '', description: '', area: 'Inbound' });
     setShowModal(true);
   };
 
@@ -76,7 +77,8 @@ export default function ProcessesManagement() {
     setEditingProcess(process);
     setFormData({
       name: process.name,
-      description: process.description || ''
+      description: process.description || '',
+      area: process.area || 'Inbound' // NOVO CAMPO
     });
     setShowModal(true);
   };
@@ -277,7 +279,7 @@ export default function ProcessesManagement() {
             <div key={process.id} className="process-card" style={{ animationDelay: `${index * 0.1}s` }}>
               <div className="process-header">
                 <div className="process-icon">🛠️</div>
-                <div className="process-badge">ID: {process.id}</div>
+                <div className="process-badge">{process.area === 'Inbound' ? '📥 Inbound' : '📤 Outbound'}</div>
               </div>
               <div className="process-body">
                 <h3 className="process-name">{process.name}</h3>
@@ -351,6 +353,18 @@ export default function ProcessesManagement() {
                   placeholder="Ex: Montagem de peças"
                 />
               </div>
+              
+              <div className="form-group">
+                <label>Área *</label>
+                <select
+                  value={formData.area}
+                  onChange={e => setFormData({...formData, area: e.target.value})}
+                >
+                  <option value="Inbound">Inbound (Recebimento)</option>
+                  <option value="Outbound">Outbound (Expedição)</option>
+                </select>
+              </div>
+              
               <div className="form-group">
                 <label>Descrição</label>
                 <textarea
