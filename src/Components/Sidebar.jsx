@@ -30,9 +30,9 @@ export default function Sidebar() {
     },
     { 
       id: 'Labor', 
-      label: 'labor', 
+      label: 'Planejamento',
       icon: '📈', 
-      path: '/dashboard/Labor',
+      path: '/dashboard/labor-planning',
       description: 'Labor Plan'
     }
   ];
