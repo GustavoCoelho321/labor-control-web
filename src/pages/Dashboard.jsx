@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from "../Components/Header";
-import Sidebar from "../Components/SideBar";
+import Sidebar from "../Components/Sidebar";
 import UsersManagement from "./UsersManagement";
 import ProcessesManagement from "./ProcessesManagement";
+import LaborPlanningPage from "./LaborPlanning/LaborPlanningPage";
 import "../styles/Dashboard.css";
 
 // Componente da tela principal
@@ -94,7 +95,7 @@ export default function Dashboard() {
             <Route index element={<DashboardHome />} />
             <Route path="users" element={<UsersManagement />} />
             <Route path="processos" element={<ProcessesManagement />} />
-            <Route path="labor" element={<Labor />} />
+            <Route path="labor-planning" element={<LaborPlanningPage />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>
