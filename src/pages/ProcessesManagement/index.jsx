@@ -1,24 +1,34 @@
 import { useState, useEffect } from 'react';
-import processService from '../services/processService';
-import productivityService from '../services/productivityService';
-import subProcessService from '../services/subProcessService'; // Novo import necessário
-import "../styles/ProcessesManagement.css";
+import processService from '../../services/processService';
+import productivityService from '../../services/productivityService';
+import subProcessService from '../../services/subProcessService';
+import { useProcessForm } from './hooks/useProcessForm';
+import { useToast } from '../../context/ToastContext';
+import "./styles.css";
 
 export default function ProcessesManagement() {
   const [processes, setProcesses] = useState([]);
   const [filteredProcesses, setFilteredProcesses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+
+  // Custom Hook for Process Form Logic
+  const {
+    showModal,
+    setShowModal,
+    editingProcess,
+    formData,
+    setFormData,
+    handleCreate,
+    handleEdit,
+    handleSubmit
+  } = useProcessForm(fetchProcesses); // Passing fetchProcesses to refresh list after updates
+
   const [showProductivityModal, setShowProductivityModal] = useState(false);
   const [showSubProcessesModal, setShowSubProcessesModal] = useState(false);
-  const [editingProcess, setEditingProcess] = useState(null);
   const [selectedProcess, setSelectedProcess] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const [formData, setFormData] = useState({
-    name: '',
-    description: ''
-  });
+  const toast = useToast();
 
   const [productivityData, setProductivityData] = useState({
     processId: 0,
@@ -40,6 +50,7 @@ export default function ProcessesManagement() {
   // Carregar processos
   useEffect(() => {
     fetchProcesses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -54,7 +65,7 @@ export default function ProcessesManagement() {
     }
   }, [searchTerm, processes]);
 
-  const fetchProcesses = async () => {
+  async function fetchProcesses() {
     try {
       setLoading(true);
       const data = await processService.getAll();
@@ -62,60 +73,25 @@ export default function ProcessesManagement() {
       setFilteredProcesses(data);
     } catch (error) {
       console.error('Erro ao buscar processos:', error);
-      alert('Erro ao carregar processos');
+      toast.error('Erro ao carregar processos');
     } finally {
       setLoading(false);
     }
-  };
-
-  // Funções de Processo (criar/editar/excluir) - mantidas iguais
-  const handleCreate = () => {
-    setEditingProcess(null);
-    setFormData({ name: '', description: '' });
-    setShowModal(true);
-  };
-
-  const handleEdit = (process) => {
-    setEditingProcess(process);
-    setFormData({
-      name: process.name,
-      description: process.description || ''
-    });
-    setShowModal(true);
-  };
+  }
 
   const handleDelete = async (id) => {
     if (!window.confirm('Tem certeza que deseja excluir este processo?')) return;
     try {
       await processService.delete(id);
-      alert('Processo excluído com sucesso!');
+      toast.success('Processo excluído com sucesso!');
       fetchProcesses();
     } catch (error) {
-      alert('Erro ao excluir processo');
+      console.error(error);
+      toast.error('Erro ao excluir processo');
     }
   };
 
-  const handleSubmit = async () => {
-    if (!formData.name.trim()) {
-      alert('Preencha o nome do processo');
-      return;
-    }
-    try {
-      if (editingProcess) {
-        await processService.update(editingProcess.id, formData);
-        alert('Processo atualizado!');
-      } else {
-        await processService.create(formData);
-        alert('Processo criado!');
-      }
-      setShowModal(false);
-      fetchProcesses();
-    } catch (error) {
-      alert('Erro ao salvar processo');
-    }
-  };
-
-  // Produtividade - mantida igual e funcionando
+  // Produtividade
   const handleManageProductivity = async (process) => {
     setSelectedProcess(process);
     try {
@@ -129,30 +105,32 @@ export default function ProcessesManagement() {
       });
       setShowProductivityModal(true);
     } catch (error) {
-      alert('Erro ao carregar produtividade');
+      console.error(error);
+      toast.error('Erro ao carregar produtividade');
     }
   };
 
   const handleProductivitySubmit = async () => {
     if (productivityData.targetPerHour <= 0) {
-      alert('Meta por hora deve ser maior que zero');
+      toast.error('Meta por hora deve ser maior que zero');
       return;
     }
     try {
       if (productivityData.id) {
         await productivityService.update(productivityData.id, productivityData);
-        alert('Produtividade atualizada!');
+        toast.success('Produtividade atualizada!');
       } else {
         await productivityService.create(productivityData);
-        alert('Produtividade criada!');
+        toast.success('Produtividade criada!');
       }
       setShowProductivityModal(false);
     } catch (error) {
-      alert('Erro ao salvar produtividade');
+      console.error(error);
+      toast.error('Erro ao salvar produtividade');
     }
   };
 
-  // NOVO: Subprocessos
+  // Subprocessos
   const handleManageSubProcesses = async (process) => {
     setSelectedProcess(process);
     try {
@@ -160,7 +138,8 @@ export default function ProcessesManagement() {
       setSubProcesses(subs || []);
       setShowSubProcessesModal(true);
     } catch (error) {
-      alert('Erro ao carregar subprocessos');
+      console.error(error);
+      toast.error('Erro ao carregar subprocessos');
     }
   };
 
@@ -184,15 +163,16 @@ export default function ProcessesManagement() {
       await subProcessService.delete(id);
       const updated = await subProcessService.getByProcess(selectedProcess.id);
       setSubProcesses(updated);
-      alert('Subprocesso excluído!');
+      toast.success('Subprocesso excluído!');
     } catch (error) {
-      alert('Erro ao excluir subprocesso');
+      console.error(error);
+      toast.error('Erro ao excluir subprocesso');
     }
   };
 
   const handleSubSubmit = async () => {
     if (!subFormData.name.trim() || subFormData.standardTimeMinutes <= 0) {
-      alert('Preencha nome e tempo padrão (maior que 0)');
+      toast.error('Preencha nome e tempo padrão (maior que 0)');
       return;
     }
     try {
@@ -202,16 +182,17 @@ export default function ProcessesManagement() {
       };
       if (editingSubProcess) {
         await subProcessService.update(editingSubProcess.id, payload);
-        alert('Subprocesso atualizado!');
+        toast.success('Subprocesso atualizado!');
       } else {
         await subProcessService.create(payload);
-        alert('Subprocesso criado!');
+        toast.success('Subprocesso criado!');
       }
       const updated = await subProcessService.getByProcess(selectedProcess.id);
       setSubProcesses(updated);
       handleSubCreate();
     } catch (error) {
-      alert('Erro ao salvar subprocesso');
+      console.error(error);
+      toast.error('Erro ao salvar subprocesso');
     }
   };
 

@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from "../Components/Header";
-import Sidebar from "../Components/SideBar";
+import Sidebar from "../Components/Sidebar";
 import UsersManagement from "./UsersManagement";
 import "../styles/Dashboard.css";
 import ProcessesManagement from "./ProcessesManagement";
