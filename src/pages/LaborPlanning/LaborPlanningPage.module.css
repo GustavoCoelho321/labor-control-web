@@ -59,6 +59,25 @@
   color: var(--navy);
 }
 
+/* Volume Inputs Layout */
+.globalParamsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+@media (min-width: 600px) and (max-width: 1024px) {
+    .globalParamsGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: end;
+    }
+
+    .volumeSummary {
+        grid-column: span 2;
+    }
+}
+
 .formGroup {
   margin-bottom: var(--spacing-md);
 }
@@ -89,6 +108,31 @@
   background-color: white;
 }
 
+/* Volume Summary Box */
+.volumeSummary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--gray-50);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--gray-300);
+    margin-bottom: var(--spacing-md);
+}
+
+.volumeSummaryLabel {
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--gray-600);
+    text-transform: uppercase;
+}
+
+.volumeSummaryValue {
+    font-size: 1.2rem;
+    font-weight: var(--font-weight-black);
+    color: var(--navy);
+}
+
 .processList {
   display: flex;
   flex-direction: column;
@@ -112,18 +156,48 @@
   }
 }
 
+.processInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    flex: 1;
+}
+
+@media (min-width: 768px) {
+  .processInfo {
+    margin-bottom: 0;
+  }
+}
+
 .processName {
   font-weight: var(--font-weight-bold);
   color: var(--navy);
   font-size: 1rem;
-  margin-bottom: var(--spacing-sm);
 }
 
-@media (min-width: 768px) {
-  .processName {
-    margin-bottom: 0;
-    flex: 1;
-  }
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badgeInbound {
+    background-color: var(--success-light);
+    color: var(--success); /* Or a darker shade if success is too light */
+    color: #047857; /* Emerald 700 for better contrast */
+    background-color: #d1fae5; /* Emerald 100 */
+}
+
+.badgeOutbound {
+    background-color: #fee2e2; /* Red 100 */
+    color: #b91c1c; /* Red 700 */
 }
 
 .processInputs {
@@ -159,26 +233,6 @@
   right: 10px;
   color: var(--gray-500);
   font-weight: var(--font-weight-medium);
-}
-
-.totalShare {
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-md);
-  border-top: 2px solid var(--gray-100);
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--spacing-sm);
-  align-items: center;
-  font-weight: var(--font-weight-bold);
-  font-size: 1.1rem;
-}
-
-.validTotal {
-  color: var(--success);
-}
-
-.invalidTotal {
-  color: var(--error);
 }
 
 .actions {
@@ -249,6 +303,7 @@
   border-bottom: 1px solid var(--gray-100);
   color: var(--navy);
   font-size: 1rem;
+  vertical-align: middle;
 }
 
 .table tr:last-child td {
@@ -257,6 +312,19 @@
 
 .table tr:hover {
   background-color: var(--gray-50);
+}
+
+/* Support Headcount Column Highlighting */
+.supportHeader {
+    color: var(--navy); /* Highlight header slightly */
+    background-color: #f1f5f9; /* Slate 100 */
+}
+
+.supportCell {
+    color: var(--gray-700);
+    background-color: #f8fafc; /* Slate 50 */
+    font-weight: var(--font-weight-semibold);
+    color: #475569; /* Slate 600 - "Cinza azulado" */
 }
 
 .loading {
