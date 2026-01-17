@@ -3,34 +3,28 @@
 ## 1. Visão Geral
 Sistema Enterprise para gestão de produtividade e dimensionamento de mão de obra (Labor Planning).
 - **Stack:** React 18 (Vite) + ASP.NET Core 8 Web API.
-- **Design:** Premium/Clean, utilizando variáveis globais CSS (DHL Brand).
+- **Design System:** DHL Brand (Amarelo `#FFCC00`, Vermelho `#D40511`, Navy `#0B1221`).
+- **Layout:** Sidebar fixa à esquerda, Header fixo no topo, tem o arquivo theme.css com os temas e cores que deve usar, também o dashboard css, tenho os aquivos contendo a header e a sider bar que são os SideBar.jsx e Header.jsx
+-
 
-## 2. Regras de Arquitetura & Código
-### Frontend (React)
-- **Estilização:**
-  - OBRIGATÓRIO: Use CSS Modules (`nome.module.css`) para layout.
-  - OBRIGATÓRIO: Use variáveis globais do `src/styles/theme.css` (ex: `var(--primary-color)`, `var(--bg-card)`) para cores e fontes. Não hardcode cores HEX.
-- **Estado:** Use `useState` para formulários locais e `useEffect` para cargas iniciais.
-- **API:** Use `src/services/api.js` (Axios instance). Trate erros 401/403/500 com Toasts visuais.
+## 2. Contrato de API (Backend Atualizado)
+O endpoint de cálculo (`POST /api/labor-planning/calculate`) foi evoluído.
 
-### Backend (.NET)
-- **Pattern:** Controller -> Service -> Repository/DbSet.
-- **Regra de Ouro:** Controllers não devem ter lógica de negócio. A lógica fica no Service.
-- **DTOs:** Request/Response devem ser tipados. Use `decimal` para horas e moeda.
-
-## 3. Lógica de Negócio (Labor Planning) - CRÍTICO
-O cálculo de headcount foi simplificado.
-- **Fórmula:** `Headcount = Volume Ajustado / (MetaHora * HorasTurno)`
-- **Volume Ajustado:** O usuário pode definir um "Fator de Volume" por processo.
-  - Ex: Se o fator for 50% (0.5), consideramos apenas metade do volume total para aquele processo.
-  - Padrão: 100% (1.0).
-
-## 4. Contrato de Dados (DTOs)
-**Request (Frontend -> Backend):**
+### Request (O que o Front envia):
 ```json
 {
-  "totalVolume": 10000,
-  "workingHoursPerShift": 8.48, // Decimal
-  "processShare": { "1": 0.5, "2": 0.5 }, // ID: % Share
-  "processVolumeFactors": { "1": 1.0, "2": 0.5 } // ID: % Fator (Novo!)
+  "inboundVolume": 15000,    // Volume específico de entrada
+  "outboundVolume": 25000,   // Volume específico de saída
+  "workingHoursPerShift": 8.48, // Decimal aceito
+  "processShare": { "1": 1.0, "2": 1.0 }, // Enviar 1.0 para todos os processos listados
+  "processVolumeFactors": { "1": 1.0 }    // Fator de redução opcional (0.0 a 1.0)
 }
+
+### Response (O que o Front recebe):
+```JSON
+  {
+    "processName": "Picking",
+    "volume": 25000,
+    "requiredHeadcount": 105.28,  // HC Operacional Direto
+    "supportHeadcount": 12.5      // HC de Apoio (Runners, Abastecedores) - NOVO!
+  }
